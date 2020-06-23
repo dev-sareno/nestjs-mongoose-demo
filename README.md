@@ -1,3 +1,40 @@
+# MongoDB
+## Query
+### $lookup
+Aggregate w/ match clause
+```
+db.persons.aggregate([
+{$lookup: {from: "subjects", localField: "_id", foreignField: "person_id", as: "subjects"}},
+{$match: {"_id": ObjectId("5ef16cd43db1f37a40de01ba")}}
+]).pretty();
+```
+Aggregate w/ 3 levels
+```
+db.persons.aggregate([
+  {
+    "$lookup": {
+      "let": { "personId": "$_id" },
+      "from": "subjects",
+      "pipeline": [
+        { "$match": { "$expr": { "$eq": ["$person_id", "$$personId"] } } },
+        { "$lookup": {
+            "let": { "roomId": "$room_id" },
+            "from": "rooms",
+            "pipeline": [
+              { "$match": { "$expr": { "$eq": [ "$_id", "$$roomId" ] } } } 
+            ],
+            "as": "room"
+          }
+        }
+      ],
+      "as": "subjects"
+    }
+  },
+  { $match: { "_id": ObjectId("5ef16cd43db1f37a40de01ba") } }
+]).pretty();
+```
+
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>
