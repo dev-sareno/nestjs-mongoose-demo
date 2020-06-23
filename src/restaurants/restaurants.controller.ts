@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { RestaurantsService } from './restaurants.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 
-@Controller('restaurants')
+@Controller('api/restaurants')
 export class RestaurantsController {
 
   constructor(
