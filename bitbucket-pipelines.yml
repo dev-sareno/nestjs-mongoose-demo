@@ -20,9 +20,55 @@ pipelines:
         artifacts:
           - 'build/**'
         script:
-          - echo 'Creating build...'
+          - echo 'Creating build'
           - mkdir -p build  # Create directory "build"
           - tar -cjf "${BITBUCKET_BUILD_NUMBER}_dist.tar.bz2" src  # Compress the src dir
           - ls -lha
           - mv "${BITBUCKET_BUILD_NUMBER}_dist.tar.bz2" build  # Move file to build dir
-          - ls -lha
+    - step:
+        name: 'Deploy to Development'
+        deployment: 'test'
+        script:
+          - pipe: 'atlassian/ssh-run:0.2.3'
+            variables:
+              SSH_USER: '$DEV_DEPLOY_USER'
+              SERVER: '$DEV_DEPLOY_SERVER'
+              COMMAND: |
+                ls -lha \
+                && mkdir -p /opt/nestjs-mongodb.backend.sareno.me/cache/$BITBUCKET_BUILD_NUMBER \
+                && cd /opt/nestjs-mongodb.backend.sareno.me/cache/$BITBUCKET_BUILD_NUMBER \
+                && pwd
+          - pipe: 'atlassian/scp-deploy:0.3.9'
+            variables:
+              SSH_USER: '$DEV_DEPLOY_USER'
+              SERVER: '$DEV_DEPLOY_SERVER'
+              REMOTE_PATH: '/opt/nestjs-mongodb.backend.sareno.me/cache/$BITBUCKET_BUILD_NUMBER'
+              LOCAL_PATH: 'build/*'
+          - pipe: 'atlassian/ssh-run:0.2.3'
+            variables:
+              SSH_USER: '$DEV_DEPLOY_USER'
+              SERVER: '$DEV_DEPLOY_SERVER'
+              COMMAND: |
+                echo 'Initializing' \
+                && cd /opt/nestjs-mongodb.backend.sareno.me/cache/$BITBUCKET_BUILD_NUMBER \
+                && ls -lha \
+                && tar xf ${BITBUCKET_BUILD_NUMBER}_dist.tar.bz2 \
+                && ls -lha \
+                && mkdir -p /opt/nestjs-mongodb.backend.sareno.me/dev/ \
+                && rm -rf /opt/nestjs-mongodb.backend.sareno.me/dev/* \
+                && cd /opt/nestjs-mongodb.backend.sareno.me/cache/$BITBUCKET_BUILD_NUMBER \
+                && mv src /opt/nestjs-mongodb.backend.sareno.me/dev \
+                && cd /opt/nestjs-mongodb.backend.sareno.me/dev/src \
+                && npm install \
+                && npm update \
+                && npm install pm2@$DEV_PM2_VERSION -g \
+                && npm run build \
+                && mkdir -p final_dist \
+                && rm -rf final_dist/* \
+                && cp dist/* final_dist \
+                && pm2 list \
+                && pm2 stop $DEV_PM2_NAMESPACE \
+                && pm2 list \
+                && pm2 start final_dist/main.js --name $DEV_PM2_NAMESPACE \
+                && pm2 list \
+                && rm -rf /opt/nestjs-mongodb.backend.sareno.me/cache/$BITBUCKET_BUILD_NUMBER
