@@ -11,6 +11,7 @@ pipelines:
         name: 'Build and test'
         script:
           - echo 'Hello gud murning!'
+          - node -v
           - npm -v
           - ls -lha
           - npm install
