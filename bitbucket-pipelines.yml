@@ -66,7 +66,7 @@ pipelines:
                 && npm run build \
                 && mkdir -p final_dist \
                 && rm -rf final_dist/* \
-                && cp dist/* final_dist \
+                && cp -r dist/* final_dist \
                 && pm2 list \
                 && pm2 stop $DEV_PM2_NAMESPACE \
                 && pm2 list \
