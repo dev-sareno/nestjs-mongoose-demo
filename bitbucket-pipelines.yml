@@ -10,9 +10,18 @@ pipelines:
     - step:
         name: 'Build and test'
         script:
-          - echo 'Hello gud murning!'
           - node -v
           - npm -v
           - ls -lha
           - npm install
           - npm update
+    - step:
+        name: 'Create build'
+        artifacts: 'build/**'
+        script:
+          - echo 'Creating build...'
+          - mkdir -p build  # Create directory "build"
+          - tar -cjf "${BITBUCKET_BUILD_NUMBER}_dist.tar.bz2" src  # Compress the src dir
+          - ls -lha
+          - mv "${BITBUCKET_BUILD_NUMBER}_dist.tar.bz2" build  # Move file to build dir
+          - ls -lha
