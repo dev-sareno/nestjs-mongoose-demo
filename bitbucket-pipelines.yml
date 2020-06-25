@@ -40,7 +40,7 @@ pipelines:
                 && pwd
           - pipe: 'atlassian/scp-deploy:0.3.9'
             variables:
-              SSH_USER: '$DEV_DEPLOY_USER'
+              USER: '$DEV_DEPLOY_USER'
               SERVER: '$DEV_DEPLOY_SERVER'
               REMOTE_PATH: '/opt/nestjs-mongodb.backend.sareno.me/cache/$BITBUCKET_BUILD_NUMBER'
               LOCAL_PATH: 'build/*'
