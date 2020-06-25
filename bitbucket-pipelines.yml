@@ -22,7 +22,9 @@ pipelines:
         script:
           - echo 'Creating build'
           - mkdir -p build  # Create directory "build"
-          - tar -cjf "${BITBUCKET_BUILD_NUMBER}_dist.tar.bz2" src  # Compress the src dir
+          - rm -rf node_modules
+          - rm -rf dist
+          - tar -cjf "${BITBUCKET_BUILD_NUMBER}_dist.tar.bz2" *  # Compress the src dir
           - ls -lha
           - mv "${BITBUCKET_BUILD_NUMBER}_dist.tar.bz2" build  # Move file to build dir
     - step:
@@ -36,8 +38,7 @@ pipelines:
               COMMAND: |
                 ls -lha \
                 && mkdir -p /opt/nestjs-mongodb.backend.sareno.me/cache/$BITBUCKET_BUILD_NUMBER \
-                && cd /opt/nestjs-mongodb.backend.sareno.me/cache/$BITBUCKET_BUILD_NUMBER \
-                && pwd
+                && cd /opt/nestjs-mongodb.backend.sareno.me/cache/$BITBUCKET_BUILD_NUMBER
           - pipe: 'atlassian/scp-deploy:0.3.9'
             variables:
               USER: '$DEV_DEPLOY_USER'
@@ -54,10 +55,10 @@ pipelines:
                 && ls -lha \
                 && tar xf ${BITBUCKET_BUILD_NUMBER}_dist.tar.bz2 \
                 && ls -lha \
-                && mkdir -p /opt/nestjs-mongodb.backend.sareno.me/dev/ \
-                && rm -rf /opt/nestjs-mongodb.backend.sareno.me/dev/* \
+                && mkdir -p /opt/nestjs-mongodb.backend.sareno.me/dev/src/ \
+                && rm -rf /opt/nestjs-mongodb.backend.sareno.me/dev/src/* \
                 && cd /opt/nestjs-mongodb.backend.sareno.me/cache/$BITBUCKET_BUILD_NUMBER \
-                && mv src /opt/nestjs-mongodb.backend.sareno.me/dev \
+                && mv * /opt/nestjs-mongodb.backend.sareno.me/dev/src \
                 && cd /opt/nestjs-mongodb.backend.sareno.me/dev/src \
                 && npm install \
                 && npm update \
