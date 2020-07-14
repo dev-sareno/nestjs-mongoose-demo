@@ -19,7 +19,6 @@ export class RestaurantsController {
     @Body() body: CreateRestaurantDto,
   ): Promise<void> {
     const result = await this.restaurantService.create(body);
-    console.log(result);
     res.status(HttpStatus.OK).json(result);
   }
 
@@ -29,7 +28,6 @@ export class RestaurantsController {
     @Res() res: Response,
   ): Promise<void> {
     const result = await this.restaurantService.getAll();
-    console.log(result);
     res.status(HttpStatus.OK).json(result);
   }
 
