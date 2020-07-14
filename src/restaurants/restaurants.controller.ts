@@ -1,8 +1,9 @@
-import { Body, Controller, Get, HttpStatus, Post, Put, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Put, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { RestaurantsService } from './restaurants.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
+import { RestaurantExistedPipe } from './pipes/restaurant-existed.pipe';
 
 @Controller('api/restaurants')
 export class RestaurantsController {
@@ -32,13 +33,14 @@ export class RestaurantsController {
     res.status(HttpStatus.OK).json(result);
   }
 
-  @Put()
+  @Put(':restaurantId')
   async update(
     @Req() req: Request,
     @Res() res: Response,
     @Body() body: UpdateRestaurantDto,
+    @Param('restaurantId', RestaurantExistedPipe) restaurantId: string,
   ): Promise<void> {
-    await this.restaurantService.updateOne(body);
+    await this.restaurantService.updateOne(restaurantId, body);
     res.sendStatus(HttpStatus.OK);
   }
 

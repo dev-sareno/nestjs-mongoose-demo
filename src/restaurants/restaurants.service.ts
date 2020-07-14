@@ -21,8 +21,8 @@ export class RestaurantsService {
     return this.restaurantModel.find().exec();
   }
 
-  async updateOne(body: UpdateRestaurantDto): Promise<void> {
-    await this.restaurantModel.updateOne({ _id: { $eq: body._id } }, body)
+  async updateOne(id: string, body: UpdateRestaurantDto): Promise<void> {
+    const result = await this.restaurantModel.updateOne({ _id: { $eq: id } }, body);
   }
 
 }
