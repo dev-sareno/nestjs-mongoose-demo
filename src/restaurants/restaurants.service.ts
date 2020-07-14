@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { IRestaurant } from './restaurant.schema';
 import { Model } from 'mongoose';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
-import { UpdateRestaurantDto } from './dto/update-restaurant.dt';
+import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 
 @Injectable()
 export class RestaurantsService {
@@ -22,7 +22,7 @@ export class RestaurantsService {
   }
 
   async updateOne(body: UpdateRestaurantDto): Promise<void> {
-    const res = await this.restaurantModel.updateOne({ _id: { $eq: body.id } }, body)
+    await this.restaurantModel.updateOne({ _id: { $eq: body._id } }, body)
   }
 
 }

@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpStatus, Post, Put, Req, Res } from '@nestjs/
 import { Request, Response } from 'express';
 import { RestaurantsService } from './restaurants.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
-import { UpdateRestaurantDto } from './dto/update-restaurant.dt';
+import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 
 @Controller('api/restaurants')
 export class RestaurantsController {
