@@ -11,7 +11,7 @@ import { RestaurantSchema } from './restaurant.schema';
       schema: RestaurantSchema,
     }
   ])],
-  exports: [],
+  exports: [RestaurantsService],
   providers: [RestaurantsService],
   controllers: [RestaurantsController],
 })
