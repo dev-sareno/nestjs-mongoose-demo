@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, NotFoundException, Param, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, NotFoundException, Param, Post, Query, Req, Res } from '@nestjs/common';
 import { BlocksService } from './blocks.service';
 import { Request, Response } from 'express';
 import { CreateBlockDto } from './dto/create-block.dto';
@@ -26,6 +26,17 @@ export class BlocksController {
     @Body() body: CreateBlockDto,
   ): Promise<void> {
     const result = await this.blocksService.create(body);
+    res.status(HttpStatus.OK).json(result);
+  }
+
+  @Get('from-point')
+  async getBlockFromPoint(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Query('lat') lat: number,
+    @Query('lng') lng: number,
+  ): Promise<void> {
+    const result = await this.blocksService.getBlockFromPoint(lat, lng);
     res.status(HttpStatus.OK).json(result);
   }
 

@@ -35,4 +35,17 @@ export class BlocksService {
     }
     return this.restaurantService.getPoints(block.geometry);
   }
+
+  async getBlockFromPoint(lat: number, lng: number): Promise<IBlock> {
+    return this.blockModel.findOne({
+      geometry: {
+        $geoIntersects: {
+          $geometry: {
+            type: "Point",
+            coordinates: [lng, lat]
+          }
+        }
+      }
+    }).exec();
+  }
 }
