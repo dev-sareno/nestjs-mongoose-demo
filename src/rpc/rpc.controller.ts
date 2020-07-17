@@ -1,7 +1,10 @@
 import { Controller, Get, HttpStatus, Query, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { load } from "protobufjs";
-import { RpcService } from './rpc.service'; // respectively "./node_modules/protobufjs"
+import { RpcService } from './rpc.service';
+
+import messages from './protobuf/rpc_pb';
+import * as test from './test.js';
 
 @Controller('api/rpc')
 export class RpcController {
@@ -41,35 +44,43 @@ export class RpcController {
     const result = await this.rpcService.get(Number(limit) || 100);
     const started = new Date().getTime();
     console.log('conversion started', started);
-    const root = await load('./src/rpc/protobuf/rpc.proto');
-    const RpcResponse = root.lookupType('training.rpc.RpcResponse');
 
     if (resType === 'blob') {
       /*
-      * Convert JSON to ProtoBuf
-      * */
-      const Coordinate = root.lookupType('training.rpc.Restaurant.Location.Coordinate');
-      const Location = root.lookupType('training.rpc.Restaurant.Location');
-      const Restaurant = root.lookupType('training.rpc.Restaurant');
-      const restaurantsMsg = [];
-      result.forEach(i => {
-        const coordinatesMsg = Coordinate.create({ latLng: [i.location.coordinates[0], i.location.coordinates[1]] });
-        const locationMsg = Location.create({ type: i.location.type, coordinate: coordinatesMsg });
-        const restaurantMsg = Restaurant.create({ location: locationMsg, name: i.name, _id: i._id.toString() });
-        restaurantsMsg.push(restaurantMsg);
-      });
-      const message = RpcResponse.create({ restaurants: restaurantsMsg });
-      console.log('conversion ended diff=', new Date().getTime() - started);
+            * Convert JSON to ProtoBuf
+            * */
+      test.test();
+      console.log(messages);
 
-      const buffer = RpcResponse.encode(message).finish();
-      // console.log(`buffer length = ${Array.prototype.toString.call(buffer).length}`);
+      // const restaurants: messages.Restaurant = [];
+      // result.forEach(i => {
+      //   const coordinate = new messages.Restaurant.Location.Coordinate();
+      //   coordinate.setLatlngList([i.location.coordinates[0], i.location.coordinates[1]]);
+      //   const location = new messages.Restaurant.Location();
+      //   location.setType(i.location.type);
+      //   location.setCoordinate(coordinate);
+      //   const restaurant = new messages.Restaurant();
+      //   restaurant.setId(i._id.toString());
+      //   restaurant.setName(i.name);
+      //   restaurant.setLocation(location);
+      //   restaurants.push(restaurant);
+      // });
+      // const response = new messages.RpcResponse();
+      // response.setRestaurantsList(restaurants);
+      //
+      // console.log('conversion ended diff=', new Date().getTime() - started);
+      //
+      // const encode = response.serializeBinary();
+      // console.log('encode', encode);
+      // console.log(`buffer length = ${Array.prototype.toString.call(encode).length}`);
       //
       // const decoded = RpcResponse.decode(buffer);
       // console.log(`decoded = ${JSON.stringify(decoded)}`);
 
-      res.status(HttpStatus.OK)
-        .type('application/octet-stream')
-        .send(buffer);
+      // res.status(HttpStatus.OK)
+      //   .type('application/octet-stream')
+      //   .send(encode);
+      res.status(HttpStatus.OK).json(result);
     } else {
       res.status(HttpStatus.OK).json(result);
     }
