@@ -8,7 +8,6 @@
  */
 // GENERATED CODE -- DO NOT EDIT!
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 var jspb = require('google-protobuf');
 var goog = jspb;
 var global = Function('return this')();
