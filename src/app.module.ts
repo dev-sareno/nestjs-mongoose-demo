@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { BlocksModule } from './blocks/blocks.module';
 import { RpcController } from './rpc/rpc.controller';
 import { RpcModule } from './rpc/rpc.module';
+import { ReactjsModule } from './reactjs/reactjs.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { RpcModule } from './rpc/rpc.module';
     RestaurantsModule,
     BlocksModule,
     RpcModule,
+    ReactjsModule,
   ],
   controllers: [AppController, RpcController],
   providers: [AppService],
