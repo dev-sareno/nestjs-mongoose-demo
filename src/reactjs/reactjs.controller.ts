@@ -1,8 +1,16 @@
-import { Body, Controller, Get, HttpStatus, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, ParseIntPipe, Post, Query, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { ReactjsService } from './reactjs.service';
+import { IShoe } from './shoes.schema';
+import { CreateShoeDto } from './dto/create-shoe.dto';
 
 @Controller('api/reactjs')
 export class ReactjsController {
+
+  constructor(
+    private readonly reactjsService: ReactjsService,
+  ) {
+  }
 
   @Post('login')
   async login(
@@ -24,19 +32,20 @@ export class ReactjsController {
   async getShoes(
     @Req() req: Request,
     @Res() res: Response,
+    @Query('limit') limit: number
   ): Promise<void> {
-    const shoes = [];
-    const brands = ['Nike', 'Adidas', 'Converse'];
-    const sizes = [7, 8, 9, 10, 11, 12];
-    const colors = ['black', 'white', 'grey', 'maroon'];
-    for (let i = 0; i < 50; i++) {
-      shoes.push({
-        brand: brands[Math.floor(Math.random() * brands.length)],
-        size: sizes[Math.floor(Math.random() * sizes.length)],
-        color: colors[Math.floor(Math.random() * colors.length)],
-      });
-    }
-    res.status(HttpStatus.OK).json(shoes);
+    const result = await this.reactjsService.getShoes(Number(limit) || 100);
+    res.status(HttpStatus.OK).json(result);
+  }
+
+  @Post('shoes')
+  async createShoe(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() body: CreateShoeDto,
+  ): Promise<void> {
+    const result = await this.reactjsService.createShoe(body);
+    res.status(HttpStatus.OK).json(result);
   }
 
 }
